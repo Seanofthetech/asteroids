@@ -32,12 +32,12 @@ def main():
 
     while True:
         log_state()
-        screen.fill("black")
 
-        for sprite in drawable:
-            sprite.draw(screen)
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return
+
         updatable.update(dt)
-        pygame.display.flip()
 
         for asteroid in asteroids:
             if asteroid.collides_with(player) == True:
@@ -45,16 +45,18 @@ def main():
                 print("Game over!")
                 sys.exit()
 
-        for shot in shots:
-            for asteroid in asteroids:
+            for shot in shots:
                 if asteroid.collides_with(shot) == True:
                     log_event("asteroid_shot")
-                    pygame.sprite.Sprite.kill(asteroid)
-                    pygame.sprite.Sprite.kill(shot)
+                    asteroid.split()
+                    shot.kill()
 
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                return
+        screen.fill("black")
+
+        for sprite in drawable:
+            sprite.draw(screen)
+
+        pygame.display.flip()
 
         dt = clock.tick(60) / 1000
 
